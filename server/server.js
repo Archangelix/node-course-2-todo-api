@@ -88,6 +88,24 @@ app.patch('/todos/:id', (req, res) => {
   });
 });
 
+// POST /users
+app.post('/users', (req, res) => {
+  var body = _.pick(req.body, ['email', 'password', 'tokens'])
+  var user = new User(body);
+
+  user.save().then((doc) => {
+    var tkn = user.generateAuthToken();
+    return tkn;
+    // res.send({doc});
+  }).then((token) => {
+    res.header('x-auth', token).send(user);
+  }).catch((e) => {
+    res.status(400).send(e);
+  });
+});
+
+
+
 app.listen(port, () => {
   console.log(`Started on port 3000`);
 })
